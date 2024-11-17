@@ -23,7 +23,7 @@ function Profile() {
                     }
                 };
 
-                const response = await axios.get(`http://localhost:8000/users/${email}`, config);
+                const response = await axios.get(`https://finalemail.onrender.com/users/${email}`, config);
                 console.log(response.data); // Check structure of the response data
                 setUserData(response.data);
             } catch (error) {
