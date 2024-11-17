@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://finalemail.onrender.com'; // Ensure this is your backend's API base URL
+const API_BASE_URL = 'http://localhost:8000'; // Ensure this is your backend's API base URL
 
 
 export const fetchUserInfo = async (token) => {
@@ -32,10 +32,10 @@ export const detectPhishing = async (data) => {
 export const registerUser = async (data) => {
     try {
         const response = await axios.post(`${API_BASE_URL}/register/`, data);
-        return response;
+        return response; 
     } catch (error) {
-        console.error('Error during registration:', error.response ? error.response.data : error.message);
-        throw error;
+        console.error('Error during registration:', error);
+        throw error; 
     }
 };
 
