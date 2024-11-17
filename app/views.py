@@ -5,17 +5,55 @@ from rest_framework.permissions import AllowAny
 from rest_framework_simplejwt.tokens import RefreshToken
 from rest_framework.response import Response
 from rest_framework import status
+from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
+from .serializers import UserSerializer
 from .serializers import UserSerializer, PhishingRequestSerializer
+from datetime import datetime
+from django.http import JsonResponse
+from django.shortcuts import get_object_or_404
 from .models import EmailAnalysis
+from .serializers import (
+    UserSerializer, 
+    PhishingRequestSerializer, 
+    EmailSerializer
+)
+
+
 from .phishing_detector import perform_phishing_detection
+from rest_framework.decorators import api_view
 import logging
 import nltk
+
 
 # Download necessary packages (only needed once)
 nltk.download('punkt')  # For tokenization
 nltk.download('stopwords')  # If you're using stop words
 nltk.download('punkt_tab')
+
 logger = logging.getLogger(__name__)
+
+class LoginView(generics.GenericAPIView):
+    serializer_class = UserSerializer
+    permission_classes = [AllowAny]
+
+    def post(self, request, *args, **kwargs):
+        email = request.data.get('email')
+        password = request.data.get('password')
+
+        try:
+            user = User.objects.get(email=email)
+            if user.check_password(password):
+                refresh = RefreshToken.for_user(user)
+                return Response({
+                    'refresh': str(refresh),
+                    'access': str(refresh.access_token),
+                    'email': user.email  # Send the email instead of username
+                })
+            else:
+                return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+        except User.DoesNotExist:
+            return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
 class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all()
@@ -28,27 +66,53 @@ class RegisterView(generics.CreateAPIView):
         user = serializer.save()
         return Response({"id": user.id, "username": user.username}, status=status.HTTP_201_CREATED)
 
-class LoginView(generics.GenericAPIView):
-    serializer_class = UserSerializer
-    permission_classes = [AllowAny]
 
-    def post(self, request, *args, **kwargs):
-        email = request.data.get('email')
-        password = request.data.get('password')
-        
-        # Authenticate user with email instead of username
-        try:
-            user = User.objects.get(email=email)  
-            if user.check_password(password):  
-                refresh = RefreshToken.for_user(user)
-                return Response({
-                    'refresh': str(refresh),
-                    'access': str(refresh.access_token),
-                })
-            else:
-                return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
-        except User.DoesNotExist:
-            return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
+@api_view(['GET'])
+def get_user_by_email(request, email):
+    try:
+        user = User.objects.get(email=email)
+        user_data = {
+            'username': user.username,
+            'first_name': user.first_name,
+            'last_name': user.last_name,
+            'email': user.email,
+            'date_joined': user.date_joined,
+            'last_login': user.last_login,
+            'is_active': user.is_active
+        }
+        return Response(user_data, status=200)
+    except User.DoesNotExist:
+        return Response({'error': 'User not found'}, status=404)
+  
+class UserProfileView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        user_data = {
+            "username": user.username,
+            "email": user.email,
+            "password": "****"  # Masked password
+        }
+        return Response(user_data)
+
+
+@api_view(['POST'])
+def analyze_email(user, sender, subject, content):
+    # Perform your email analysis logic
+    is_phishing = perform_analysis(content)  # Example analysis logic
+    confidence_score = calculate_confidence(content)
+
+    # Create a new EmailAnalysis record and associate it with the user
+    email_analysis = EmailAnalysis.objects.create(
+        user=user,  # Associate the logged-in user
+        sender=sender,
+        subject=subject,
+        content=content,
+        is_phishing=is_phishing,
+        confidence_score=confidence_score
+    )
+    return email_analysis
 
 class PhishingDetectionView(generics.GenericAPIView):
     permission_classes = [AllowAny]
