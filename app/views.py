@@ -55,17 +55,26 @@ class LoginView(generics.GenericAPIView):
         except User.DoesNotExist:
             return Response({'detail': 'Invalid credentials'}, status=status.HTTP_401_UNAUTHORIZED)
 
-class RegisterView(generics.CreateAPIView):
-    queryset = User.objects.all()
-    serializer_class = UserSerializer
-    permission_classes = [AllowAny]
+class RegisterView(APIView):
+    permission_classes = [AllowAny]  # Allow anyone to access this view
 
-    def create(self, request, *args, **kwargs):
-        serializer = self.get_serializer(data=request.data)
-        serializer.is_valid(raise_exception=True)
-        user = serializer.save()
-        return Response({"id": user.id, "username": user.username}, status=status.HTTP_201_CREATED)
+    def post(self, request, *args, **kwargs):
+        username = request.data.get('username')
+        email = request.data.get('email')
+        password = request.data.get('password')
+        
+        if not username or not email or not password:
+            return Response({"detail": "Missing fields"}, status=status.HTTP_400_BAD_REQUEST)
 
+        # Create new user
+        user = User.objects.create_user(username=username, email=email, password=password)
+
+        # Optionally, generate a JWT token upon registration
+        refresh = RefreshToken.for_user(user)
+        return Response({
+            'refresh': str(refresh),
+            'access': str(refresh.access_token),
+        }, status=status.HTTP_201_CREATED)
 
 @api_view(['GET'])
 def get_user_by_email(request, email):

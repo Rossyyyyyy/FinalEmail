@@ -31,12 +31,13 @@ export const detectPhishing = async (data) => {
 // Function for user registration
 export const registerUser = async (data) => {
     try {
-        const response = await axios.post('https://finalemail.onrender.com/register/', userData);
+        const response = await axios.post('https://finalemail.onrender.com/register/', data);
         console.log('Registration successful:', response.data);
     } catch (error) {
         console.error('Error during registration:', error);
     }
 };
+
 
 
 // Function for user login
