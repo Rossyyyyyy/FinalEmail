@@ -63,7 +63,7 @@ MIDDLEWARE = [
 CORS_ALLOW_ALL_ORIGINS = True
 CORS_ALLOWED_ORIGINS = [
     'http://localhost:3000',  # Replace with your frontend's URL
-    'https://finalemail.onrender.com',
+    'https://finalemail-1.onrender.com',
 ]
 
 

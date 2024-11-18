@@ -1,6 +1,6 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://finalemail-1.onrender.com/';
+const API_BASE_URL = 'https://finalemail-1.onrender.com';
 
 
 export const fetchUserInfo = async (token) => {

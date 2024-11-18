@@ -15,7 +15,7 @@ function AccountDash() {
             } else {
                 const fetchEmail = async () => {
                     try {
-                        const response = await fetch(`https://finalemail.onrender.com/api/get-email`, {
+                        const response = await fetch(`https://finalemail-1.onrender.com/api/get-email`, {
                             method: 'GET',
                             headers: {
                                 'Authorization': `Bearer ${localStorage.getItem('authToken')}`,

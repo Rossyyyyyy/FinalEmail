@@ -2,7 +2,6 @@
 from django.urls import path
 from .views import RegisterView, LoginView, PhishingDetectionView, UserProfileView, get_user_by_email
 from app.views import RegisterView
-
 urlpatterns = [
     path('detect/', PhishingDetectionView.as_view(), name='detect_phishing'),
     path('register/', RegisterView.as_view(), name='register'),
