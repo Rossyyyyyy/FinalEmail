@@ -17,6 +17,7 @@ function Register() {
         const data = { username, email, password };
 
         try {
+            console.log("Attempting to register...")
             await registerUser(data);
             setSuccess('Registration successful!');
             setError(null);

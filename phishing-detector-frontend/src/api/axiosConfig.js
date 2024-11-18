@@ -1,11 +1,11 @@
 import axios from 'axios';
 
-const API_BASE_URL = 'https://finalemail.onrender.com';
+const API_BASE_URL = 'https://finalemail-1.onrender.com/';
 
 
 export const fetchUserInfo = async (token) => {
     try {
-        const response = await axios.get(`https://finalemail.onrender.com/user-info`, {
+        const response = await axios.get(`https://finalemail-1.onrender.com/user-info`, {
             headers: {
                 'Authorization': `Bearer ${token}`,
                 'Content-Type': 'application/json',
@@ -20,7 +20,7 @@ export const fetchUserInfo = async (token) => {
 // Function for phishing detection
 export const detectPhishing = async (data) => {
     try {
-        const response = await axios.post(`https://finalemail.onrender.com/detect/`, data);
+        const response = await axios.post(`https://finalemail-1.onrender.com/detect/`, data);
         return response; 
     } catch (error) {
         console.error('Error during phishing detection:', error);
@@ -31,7 +31,7 @@ export const detectPhishing = async (data) => {
 // Function for user registration
 export const registerUser = async (data) => {
     try {
-        const response = await axios.post('https://finalemail.onrender.com/register/', data);
+        const response = await axios.post('https://finalemail-1.onrender.com/register/', data);
         console.log('Registration successful:', response.data);
     } catch (error) {
         console.error('Error during registration:', error);
