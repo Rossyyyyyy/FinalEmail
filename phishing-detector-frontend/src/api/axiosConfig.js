@@ -39,6 +39,7 @@ export const registerUser = async (data) => {
     }
 };
 
+
 // Function for user login
 export const loginUser = async (data) => {
     try {

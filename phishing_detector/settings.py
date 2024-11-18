@@ -25,7 +25,7 @@ SECRET_KEY = 'django-insecure--$y+m(d!d@+a1j2ro)7y7(srd%uvq62g5b)m8s8g=%)3odr!2g
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -61,6 +61,11 @@ MIDDLEWARE = [
 ]
 
 CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOWED_ORIGINS = [
+    'http://localhost:3000',  # Replace with your frontend's URL
+    'https://finalemail.onrender.com',
+]
+
 
 ROOT_URLCONF = 'phishing_detector.urls'
 
